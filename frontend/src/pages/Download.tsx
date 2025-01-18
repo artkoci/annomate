@@ -68,7 +68,7 @@ export const Download = () => {
           <Button 
             variant="default"
             size="lg"
-            className="bg-green-600 hover:bg-green-700 min-w-64"
+            className="bg-emerald-500 hover:bg-emerald-600 min-w-64 font-semibold"
             onClick={() => {
               // TODO: Implement download functionality
               console.log("Download annotations");
@@ -85,7 +85,7 @@ export const Download = () => {
           <Button 
             variant="outline"
             size="lg"
-            className="min-w-64 border-gray-700 text-gray-300 hover:bg-gray-800"
+            className="min-w-64 border-violet-400 border-2 text-violet-400 hover:bg-violet-500 hover:text-white font-semibold"
             onClick={() => {
               // Start a new session by clearing the images
               window.location.href = "/";
