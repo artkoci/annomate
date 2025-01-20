@@ -1,4 +1,8 @@
-- add a backend 
-- add a database
-- persist annotations
-- enable downloading annotations
+- [x] add a frontend
+- [x] add a mascot
+- [ ] add a backend 
+- [ ] add a database
+- [ ] persist annotations
+- [ ] enable downloading annotations
+- [ ] update the readme
+- [ ] containerize the app
