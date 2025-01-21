@@ -202,5 +202,6 @@ cython_debug/
 .pypirc
 
 # Don't track static/images
-static/images/*
+backend/app/static/images/*
+backend/app/static/
 *.db
