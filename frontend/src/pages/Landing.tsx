@@ -35,18 +35,27 @@ export const Landing = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-900 text-white p-4">
-      <div className="text-center mb-8">
-        <img src={mascot} alt="Annomate Mascot" className="w-48 h-48 mx-auto mb-6" />
-        <h1 className="text-4xl font-bold mb-2">Welcome to Annomate</h1>
-        <p className="text-gray-400">Upload your images to start annotating</p>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white p-4 animate-gradient-shift bg-[length:400%_400%]">
+      <div className="text-center mb-8 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/10 to-transparent blur-3xl -z-10" />
+        <img 
+          src={mascot} 
+          alt="Annomate Mascot" 
+          className="w-48 h-48 mx-auto mb-6 animate-float drop-shadow-[0_0_15px_rgba(34,197,94,0.2)]" 
+        />
+        <h1 className="text-5xl font-bold mb-2 bg-gradient-to-r from-white via-emerald-100 to-white bg-clip-text text-transparent animate-pulse">
+          Welcome to Annomate
+        </h1>
+        <p className="text-lg text-gray-300 animate-fade-in-up">
+          Upload your images to start annotating
+        </p>
       </div>
 
       <div
-        className={`w-full max-w-2xl p-8 border-2 border-dashed rounded-lg transition-colors ${
+        className={`w-full max-w-2xl p-8 rounded-xl backdrop-blur-md transition-all duration-300 animate-scale-up ${
           isDragging
-            ? "border-blue-500 bg-blue-500/10"
-            : "border-gray-600 hover:border-gray-500"
+            ? "bg-emerald-500/20 border-2 border-emerald-400 shadow-[0_0_30px_rgba(34,197,94,0.2)]"
+            : "bg-gray-800/50 border border-gray-700 hover:bg-gray-800/80 hover:border-emerald-900"
         }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -54,8 +63,8 @@ export const Landing = () => {
       >
         <div className="flex flex-col items-center justify-center gap-4">
           <div className="text-center">
-            <p className="text-lg mb-2">
-              Drag and drop your images here, or click to select files
+            <p className="text-xl mb-2 font-medium">
+              Drag and drop your images here
             </p>
             <p className="text-sm text-gray-400">
               Supported formats: PNG, JPG, JPEG
@@ -65,7 +74,7 @@ export const Landing = () => {
           <label htmlFor="file-upload">
             <Button
               variant="secondary"
-              className="cursor-pointer"
+              className="cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-emerald-900/50"
               onClick={() => document.getElementById("file-upload")?.click()}
             >
               Select Files

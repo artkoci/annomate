@@ -8,75 +8,96 @@ export const Download = () => {
   const { images } = useImages();
 
   useEffect(() => {
-    // Fire initial confetti burst
-    const duration = 3 * 1000;
-    const end = Date.now() + duration;
+    // Fire a smooth initial confetti burst
+    const duration = 2000;
+    const animationEnd = Date.now() + duration;
 
-    const colors = ["#22c55e", "#16a34a", "#15803d"]; // Different shades of green
+    const colors = ["#22c55e", "#16a34a", "#15803d"];
 
     (function frame() {
       confetti({
-        particleCount: 3,
+        particleCount: 7,
         angle: 60,
-        spread: 55,
+        spread: 70,
         origin: { x: 0 },
-        colors: colors
+        colors: colors,
+        ticks: 300,
+        gravity: 0.8,
+        scalar: 1.2,
+        drift: 0
       });
       confetti({
-        particleCount: 3,
+        particleCount: 7,
         angle: 120,
-        spread: 55,
+        spread: 70,
         origin: { x: 1 },
-        colors: colors
+        colors: colors,
+        ticks: 300,
+        gravity: 0.8,
+        scalar: 1.2,
+        drift: 0
       });
 
-      if (Date.now() < end) {
+      if (Date.now() < animationEnd) {
         requestAnimationFrame(frame);
       }
     }());
 
-    // After initial burst, add some random pops
+    // Add gentle random confetti pops
     const randomConfetti = setInterval(() => {
       confetti({
-        particleCount: 10,
+        particleCount: 15,
         angle: 90,
-        spread: 100,
-        origin: { y: 0.8, x: Math.random() },
+        spread: 45,
+        origin: { y: 0.7, x: Math.random() },
         colors: colors,
-        startVelocity: 20,
+        startVelocity: 25,
+        gravity: 0.8,
+        ticks: 200,
+        decay: 0.92,
+        scalar: 1
       });
-    }, 1500);
+    }, 2500);
 
     return () => clearInterval(randomConfetti);
   }, []);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-900 text-white p-4">
-      <div className="text-center mb-8 animate-in fade-in slide-in-from-bottom duration-1000">
+      <div className="text-center mb-8">
         <img 
           src={mascot} 
           alt="Annomate Mascot" 
-          className="w-32 h-32 mx-auto mb-6 animate-bounce" 
+          className="w-32 h-32 mx-auto mb-6 animate-[bounce_2s_ease-in-out_infinite]" 
         />
-        <h1 className="text-4xl font-bold mb-4 animate-in fade-in slide-in-from-bottom duration-1000 delay-300">
+        <h1 
+          className="text-4xl font-bold mb-4 opacity-0 animate-[fade-in-up_0.5s_ease-out_0.3s_forwards]"
+        >
           Annotation Complete!
         </h1>
-        <p className="text-gray-400 mb-8 animate-in fade-in slide-in-from-bottom duration-1000 delay-500">
+        <p 
+          className="text-gray-400 mb-8 opacity-0 animate-[fade-in-up_0.5s_ease-out_0.5s_forwards]"
+        >
           Your annotations have been saved successfully.
         </p>
-        <div className="flex flex-col gap-4 items-center animate-in fade-in slide-in-from-bottom duration-1000 delay-700">
+        <div className="flex flex-col gap-4 items-center">
           <Button 
             variant="default"
             size="lg"
-            className="bg-emerald-500 hover:bg-emerald-600 min-w-64 font-semibold"
+            className="bg-emerald-500 hover:bg-emerald-600 min-w-64 font-semibold opacity-0 animate-[fade-in-up_0.5s_ease-out_0.7s_forwards] transition-colors duration-200"
             onClick={() => {
               // TODO: Implement download functionality
               console.log("Download annotations");
-              // Add a small confetti burst on download click
+              // Add a smooth confetti burst on download click
               confetti({
-                particleCount: 50,
-                spread: 70,
-                origin: { y: 0.7 }
+                particleCount: 80,
+                spread: 60,
+                origin: { y: 0.7 },
+                colors: ["#22c55e", "#16a34a", "#15803d"],
+                ticks: 200,
+                gravity: 0.8,
+                decay: 0.92,
+                scalar: 1.2
               });
             }}
           >
@@ -85,9 +106,8 @@ export const Download = () => {
           <Button 
             variant="outline"
             size="lg"
-            className="min-w-64 border-violet-400 border-2 text-violet-400 hover:bg-violet-500 hover:text-white font-semibold"
+            className="min-w-64 border-violet-400 border-2 text-violet-400 hover:bg-violet-500 hover:text-white font-semibold opacity-0 animate-[fade-in-up_0.5s_ease-out_0.9s_forwards] transition-colors duration-200"
             onClick={() => {
-              // Start a new session by clearing the images
               window.location.href = "/";
             }}
           >
