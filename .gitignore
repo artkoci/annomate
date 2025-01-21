@@ -203,3 +203,4 @@ cython_debug/
 
 # Don't track static/images
 static/images/
+app.db
