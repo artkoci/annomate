@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Annotation } from "@/lib/types";
 import { toast } from "sonner";
 
@@ -15,8 +15,16 @@ interface AnnotationManagerProps {
 }
 
 export const AnnotationManager = ({ currentImageIndex, children }: AnnotationManagerProps) => {
-  // Store annotations as a map of image index to annotations array
-  const [annotationsMap, setAnnotationsMap] = useState<Record<number, Annotation[]>>({});
+  // Initialize state from localStorage if available
+  const [annotationsMap, setAnnotationsMap] = useState<Record<number, Annotation[]>>(() => {
+    const saved = localStorage.getItem('annotations');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  // Save to localStorage whenever annotations change
+  useEffect(() => {
+    localStorage.setItem('annotations', JSON.stringify(annotationsMap));
+  }, [annotationsMap]);
 
   // Get annotations for current image
   const currentAnnotations = annotationsMap[currentImageIndex] || [];

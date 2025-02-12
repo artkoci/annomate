@@ -2,10 +2,108 @@ import { Button } from "@/components/ui/button";
 import { useImages } from "@/context/ImageContext";
 import mascot from "@/assets/mascot.png";
 import confetti from "canvas-confetti";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { Annotation } from "@/lib/types";
+import JSZip from 'jszip';
+import { toast } from "sonner";
+
+interface ImageAnnotations {
+  imageIndex: number;
+  annotations: Annotation[];
+}
 
 export const Download = () => {
   const { images } = useImages();
+  const navigate = useNavigate();
+
+  // Get annotations from localStorage
+  const getAnnotations = (): ImageAnnotations[] => {
+    const saved = localStorage.getItem('annotations');
+    if (!saved) return [];
+    
+    const annotationsMap = JSON.parse(saved) as Record<string, Annotation[]>;
+    return Object.entries(annotationsMap).map(([imageIndex, annotations]) => ({
+      imageIndex: parseInt(imageIndex),
+      annotations
+    }));
+  };
+
+  const handleDownload = useCallback(async () => {
+    const imageAnnotations = getAnnotations();
+    
+    // Create CSV header
+    const csvRows = ['image_name,label,x,y,width,height'];
+    
+    // Create a new zip file
+    const zip = new JSZip();
+    const imagesFolder = zip.folder("images");
+    
+    // Add each annotation as a row and save corresponding images
+    for (const { imageIndex, annotations } of imageAnnotations) {
+      if (annotations.length === 0) continue;
+
+      try {
+        // Fetch the image and get its blob
+        const response = await fetch(images[imageIndex]);
+        const imageBlob = await response.blob();
+        
+        // Generate a meaningful filename (using index to ensure uniqueness)
+        const imageName = `image_${imageIndex}.${imageBlob.type.split('/')[1]}`;
+        
+        // Add image to zip
+        imagesFolder?.file(imageName, imageBlob);
+        
+        // Add annotations to CSV
+        annotations.forEach((annotation) => {
+          const row = [
+            imageName,
+            annotation.label,
+            annotation.coordinates.x,
+            annotation.coordinates.y,
+            annotation.coordinates.width,
+            annotation.coordinates.height
+          ].join(',');
+          csvRows.push(row);
+        });
+      } catch (error) {
+        console.error(`Failed to process image ${imageIndex}:`, error);
+        toast.error(`Failed to process image ${imageIndex}`);
+      }
+    }
+
+    // Add CSV to zip
+    const csvContent = csvRows.join('\n');
+    zip.file("annotations.csv", csvContent);
+
+    try {
+      // Generate zip file
+      const content = await zip.generateAsync({ type: "blob" });
+      
+      // Create download link
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(content);
+      link.setAttribute('download', 'annotations.zip');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Add a smooth confetti burst on download
+      confetti({
+        particleCount: 80,
+        spread: 60,
+        origin: { y: 0.7 },
+        colors: ["#22c55e", "#16a34a", "#15803d"],
+        ticks: 200,
+        gravity: 0.8,
+        decay: 0.92,
+        scalar: 1.2
+      });
+    } catch (error) {
+      console.error('Failed to create zip file:', error);
+      toast.error('Failed to create download file');
+    }
+  }, [images]);
 
   useEffect(() => {
     // Fire a smooth initial confetti burst
@@ -85,31 +183,15 @@ export const Download = () => {
             variant="default"
             size="lg"
             className="bg-emerald-500 hover:bg-emerald-600 min-w-64 font-semibold opacity-0 animate-[fade-in-up_0.5s_ease-out_0.7s_forwards] transition-colors duration-200"
-            onClick={() => {
-              // TODO: Implement download functionality
-              console.log("Download annotations");
-              // Add a smooth confetti burst on download click
-              confetti({
-                particleCount: 80,
-                spread: 60,
-                origin: { y: 0.7 },
-                colors: ["#22c55e", "#16a34a", "#15803d"],
-                ticks: 200,
-                gravity: 0.8,
-                decay: 0.92,
-                scalar: 1.2
-              });
-            }}
+            onClick={handleDownload}
           >
-            Download Annotations
+            Download Annotations & Images
           </Button>
           <Button 
             variant="outline"
             size="lg"
             className="min-w-64 border-violet-400 border-2 text-violet-400 hover:bg-violet-500 hover:text-white font-semibold opacity-0 animate-[fade-in-up_0.5s_ease-out_0.9s_forwards] transition-colors duration-200"
-            onClick={() => {
-              window.location.href = "/";
-            }}
+            onClick={() => navigate("/")}
           >
             Start New Session
           </Button>
