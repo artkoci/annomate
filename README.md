@@ -1,4 +1,4 @@
-# Annomate - Image Annotation Tool
+# Annomate - Your Annotation Friend
 
 ![Annomate](./frontend/src/assets/mascot.png)
 
